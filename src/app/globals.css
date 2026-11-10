@@ -19,6 +19,8 @@
   --hot-bg: #fce9e3;
   --cold: #1d5c9c;
   --cold-bg: #e4eef9;
+  /* Cor única das séries nos gráficos. */
+  --series: #2a78d6;
 }
 
 @theme inline {

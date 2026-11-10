@@ -34,10 +34,28 @@ Para o webhook funcionar, configure `SUPABASE_SECRET_KEY`, `META_APP_SECRET` e
 `META_WEBHOOK_VERIFY_TOKEN`, e cadastre na Meta o endereço
 `https://<site>/api/webhooks/meta` assinando o campo `messages`.
 
-Ainda não feito: Lead Ads (formulários de anúncio da Meta), que depende do
-token de página obtido na conexão do Facebook (fase 4).
+## Fase 4 (métricas de redes sociais)
 
-Próxima fase: métricas sociais.
+- O cliente conecta Instagram e Facebook em `/redes` (Facebook Login, Graph API
+  v27). Os tokens de página ficam cifrados no banco (AES-256-GCM, chave derivada
+  de `META_APP_SECRET`).
+- A cada atualização guardamos um registro por conta e por dia (seguidores,
+  alcance, visualizações, interações) e as 25 últimas publicações do Instagram.
+  O histórico fica aqui para sempre; a Meta só devolve janelas curtas.
+- Atualização: automática ao abrir a página (dados com mais de 6h), pelo botão
+  "Atualizar agora", e diária pelo Cron da Vercel (`/api/cron/sync-social`, que
+  exige `CRON_SECRET` e `SUPABASE_SECRET_KEY`).
+
+Configuração na Meta: em Facebook Login, cadastre o redirect
+`https://<site>/api/meta/callback`. As permissões usadas estão em
+`src/lib/meta/config.ts`; contas que não são administradoras ou testadoras do
+app só conseguem conectar depois do App Review.
+
+Testado contra um simulador local da Graph API escrito a partir da
+documentação; ainda não testado contra a Meta real.
+
+Ainda não feito: Lead Ads (formulários de anúncio da Meta) e publicações do
+Facebook.
 
 ## Configuração
 

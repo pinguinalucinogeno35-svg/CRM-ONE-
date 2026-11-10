@@ -153,3 +153,15 @@ export function IconCapture(props: P) {
     </Icon>
   );
 }
+
+/** Redes: três perfis ligados por linhas. */
+export function IconSocial(props: P) {
+  return (
+    <Icon {...props}>
+      <circle cx="6" cy="12" r="2.5" />
+      <circle cx="17.5" cy="6" r="2.5" />
+      <circle cx="17.5" cy="18" r="2.5" />
+      <path d="m8.2 10.8 7-3.6M8.2 13.2l7 3.6" />
+    </Icon>
+  );
+}

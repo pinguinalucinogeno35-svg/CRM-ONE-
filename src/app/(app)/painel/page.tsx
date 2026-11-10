@@ -106,11 +106,12 @@ export default async function PainelPage() {
         </>
       )}
 
-      <Card className="p-5">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted">Em breve</p>
-        <h2 className="mt-2 font-semibold">Redes sociais</h2>
-        <p className="mt-1 text-sm text-muted">Métricas dos seus perfis de Instagram e Facebook.</p>
-      </Card>
+      <Link href="/redes">
+        <Card className="p-5 transition hover:border-ink">
+          <h2 className="font-semibold">Redes sociais</h2>
+          <p className="mt-1 text-sm text-muted">Seguidores, alcance e melhores publicações do Instagram e do Facebook.</p>
+        </Card>
+      </Link>
     </>
   );
 }
