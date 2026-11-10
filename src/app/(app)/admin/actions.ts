@@ -145,3 +145,39 @@ export async function removeClientUser(formData: FormData) {
   }
   refresh();
 }
+
+export async function addWhatsAppChannel(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const organizationId = String(formData.get("organization_id") ?? "");
+  const externalId = String(formData.get("external_id") ?? "").replace(/\s/g, "");
+  const label = String(formData.get("label") ?? "").trim();
+
+  if (!UUID.test(organizationId)) return { error: "Cliente inválido." };
+  if (!/^[0-9]{5,25}$/.test(externalId)) {
+    return { error: "Informe o ID do número (Phone number ID), só com dígitos. Não é o telefone." };
+  }
+  if (label.length > 80) return { error: "O nome pode ter até 80 caracteres." };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("capture_channels")
+    .insert({ organization_id: organizationId, kind: "whatsapp", external_id: externalId, label });
+  if (error) {
+    return {
+      error: error.code === "23505" ? "Este número já está ligado a um cliente." : "Não foi possível conectar o número.",
+    };
+  }
+  refresh();
+  return { success: "Número conectado." };
+}
+
+export async function removeChannel(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("channel_id") ?? "");
+  if (!UUID.test(id)) return;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("capture_channels").delete().eq("id", id);
+  if (error) throw new Error("Não foi possível remover o número.");
+  refresh();
+}

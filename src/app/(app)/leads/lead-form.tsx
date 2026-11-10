@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
 import { saveLead } from "./actions";
 import { Alert, Field } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
+import { useFormAction } from "@/lib/use-form-action";
 import { SOURCES, STAGES, TEMPERATURES, formatPhone, type Lead } from "@/lib/leads";
 
 const control = "w-full rounded-lg border border-line bg-surface px-3 text-sm";
@@ -35,9 +35,9 @@ function Select({
 }
 
 export function LeadForm({ lead, back }: { lead?: Lead; back: "leads" | "funil" }) {
-  const [state, action] = useActionState(saveLead, null);
+  const { state, pending, formProps } = useFormAction(saveLead);
   return (
-    <form action={action} className="space-y-4">
+    <form {...formProps} className="space-y-4">
       {lead ? <input type="hidden" name="id" value={lead.id} /> : null}
       <input type="hidden" name="back" value={back} />
 
@@ -82,7 +82,7 @@ export function LeadForm({ lead, back }: { lead?: Lead; back: "leads" | "funil" 
       {state?.error ? <Alert>{state.error}</Alert> : null}
 
       <div className="flex items-center gap-3">
-        <SubmitButton pendingLabel="Salvando...">{lead ? "Salvar alterações" : "Criar lead"}</SubmitButton>
+        <SubmitButton pending={pending} pendingLabel="Salvando...">{lead ? "Salvar alterações" : "Criar lead"}</SubmitButton>
         <Link href={`/${back}`} className="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-muted hover:text-ink">
           Cancelar
         </Link>

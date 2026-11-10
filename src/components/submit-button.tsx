@@ -14,13 +14,17 @@ export function SubmitButton({
   pendingLabel,
   variant = "primary",
   className = "",
+  pending: pendingProp = false,
 }: {
   children: ReactNode;
   pendingLabel?: string;
   variant?: keyof typeof styles;
   className?: string;
+  /** Para formulários enviados com useFormAction, que não ativam o useFormStatus. */
+  pending?: boolean;
 }) {
-  const { pending } = useFormStatus();
+  const status = useFormStatus();
+  const pending = pendingProp || status.pending;
   return (
     <button
       type="submit"

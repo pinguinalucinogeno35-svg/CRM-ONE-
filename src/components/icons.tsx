@@ -143,3 +143,13 @@ export function IconChat(props: P) {
     </Icon>
   );
 }
+
+/** Captação: ímã puxando dois pontos. */
+export function IconCapture(props: P) {
+  return (
+    <Icon {...props}>
+      <path d="M6 4.5v7a6 6 0 0 0 12 0v-7h-4v7a2 2 0 0 1-4 0v-7H6Z" />
+      <path d="M6 8h4M14 8h4" />
+    </Icon>
+  );
+}

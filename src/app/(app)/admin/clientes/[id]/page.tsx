@@ -6,8 +6,10 @@ import { createClient } from "@/lib/supabase/server";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { IconBack } from "@/components/icons";
-import { removeClientUser, setOrganizationActive } from "../../actions";
-import { NewUserForm, ResetPasswordForm } from "../../admin-forms";
+import { CopyField } from "@/components/copy-field";
+import { siteUrl } from "@/lib/site-url";
+import { removeChannel, removeClientUser, setOrganizationActive } from "../../actions";
+import { NewUserForm, NewWhatsAppChannelForm, ResetPasswordForm } from "../../admin-forms";
 
 export const metadata: Metadata = { title: "Cliente" };
 
@@ -19,13 +21,20 @@ export default async function ClientePage({ params }: PageProps<"/admin/clientes
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const supabase = await createClient();
-  const [{ data: org }, { data: memberRows }] = await Promise.all([
-    supabase.from("organizations").select("id, name, is_active").eq("id", id).maybeSingle(),
+  const [{ data: org }, { data: memberRows }, { data: channels }, base] = await Promise.all([
+    supabase.from("organizations").select("id, name, is_active, capture_token").eq("id", id).maybeSingle(),
     supabase
       .from("memberships")
       .select("user_id, profiles!inner(email, full_name)")
       .eq("organization_id", id)
       .order("created_at"),
+    supabase
+      .from("capture_channels")
+      .select("id, label, external_id")
+      .eq("organization_id", id)
+      .eq("kind", "whatsapp")
+      .order("created_at"),
+    siteUrl(),
   ]);
   if (!org) notFound();
   const members = (memberRows ?? []) as unknown as Member[];
@@ -81,6 +90,35 @@ export default async function ClientePage({ params }: PageProps<"/admin/clientes
       <Card className="p-5">
         <h2 className="mb-4 font-semibold">Novo usuário</h2>
         <NewUserForm organizationId={org.id} />
+      </Card>
+
+      <Card className="mt-4 space-y-4 p-5">
+        <h2 className="font-semibold">Captação de leads</h2>
+        <CopyField label="Formulário público deste cliente" value={`${base}/f/${org.capture_token}`} />
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Números de WhatsApp conectados</h3>
+          {channels?.length ? (
+            <ul className="mb-4 divide-y divide-line rounded-lg border border-line">
+              {channels.map((c) => (
+                <li key={c.id} className="flex items-center gap-3 px-3 py-2">
+                  <div className="min-w-0 flex-1 text-sm">
+                    <p className="truncate">{c.label || "Sem nome"}</p>
+                    <p className="font-mono text-xs text-muted">ID {c.external_id}</p>
+                  </div>
+                  <form action={removeChannel}>
+                    <input type="hidden" name="channel_id" value={c.id} />
+                    <SubmitButton variant="danger" pendingLabel="Removendo...">
+                      Remover
+                    </SubmitButton>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mb-4 text-sm text-muted">Nenhum número conectado.</p>
+          )}
+          <NewWhatsAppChannelForm organizationId={org.id} />
+        </div>
       </Card>
     </>
   );

@@ -21,7 +21,23 @@ Stack: Next.js 16 (App Router) + Supabase (Postgres, Auth, RLS) + Vercel.
   Perdido); arrastar um cartão muda a etapa.
 - Painel (`/painel`): leads em aberto, por temperatura e por etapa.
 
-Próximas fases: captura automática de leads e métricas sociais.
+## Fase 3 (captura automática)
+
+- Formulário público por cliente em `/f/<token>`; `?origem=instagram` (ou
+  `facebook`, `site`...) define a origem do lead. Links prontos em `/captura`.
+- WhatsApp: `POST /api/webhooks/meta` recebe as mensagens da WhatsApp Cloud API
+  e cria o lead no cliente dono do número (ligado em `/admin` pelo Phone number
+  ID). Conversas vindas de anúncio entram com origem "Anúncio".
+- Um telefone que já tem lead em aberto no cliente não gera lead duplicado.
+
+Para o webhook funcionar, configure `SUPABASE_SECRET_KEY`, `META_APP_SECRET` e
+`META_WEBHOOK_VERIFY_TOKEN`, e cadastre na Meta o endereço
+`https://<site>/api/webhooks/meta` assinando o campo `messages`.
+
+Ainda não feito: Lead Ads (formulários de anúncio da Meta), que depende do
+token de página obtido na conexão do Facebook (fase 4).
+
+Próxima fase: métricas sociais.
 
 ## Configuração
 

@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
 import { changePassword, updateName } from "./actions";
 import { Alert, Field } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
+import { useFormAction } from "@/lib/use-form-action";
 import type { ActionState } from "@/lib/action-state";
 
 function Feedback({ state }: { state: ActionState }) {
@@ -13,20 +13,20 @@ function Feedback({ state }: { state: ActionState }) {
 }
 
 export function NameForm({ fullName }: { fullName: string }) {
-  const [state, action] = useActionState(updateName, null);
+  const { state, pending, formProps } = useFormAction(updateName);
   return (
-    <form action={action} className="space-y-4">
+    <form {...formProps} className="space-y-4">
       <Field label="Nome" name="full_name" defaultValue={fullName} autoComplete="name" required maxLength={120} />
       <Feedback state={state} />
-      <SubmitButton pendingLabel="Salvando...">Salvar nome</SubmitButton>
+      <SubmitButton pending={pending} pendingLabel="Salvando...">Salvar nome</SubmitButton>
     </form>
   );
 }
 
 export function PasswordForm() {
-  const [state, action] = useActionState(changePassword, null);
+  const { state, pending, formProps } = useFormAction(changePassword, { resetOnSuccess: true });
   return (
-    <form action={action} className="space-y-4">
+    <form {...formProps} className="space-y-4">
       <Field
         label="Nova senha"
         name="password"
@@ -38,7 +38,7 @@ export function PasswordForm() {
       />
       <Field label="Repita a nova senha" name="confirmation" type="password" autoComplete="new-password" minLength={8} required />
       <Feedback state={state} />
-      <SubmitButton pendingLabel="Alterando...">Alterar senha</SubmitButton>
+      <SubmitButton pending={pending} pendingLabel="Alterando...">Alterar senha</SubmitButton>
     </form>
   );
 }

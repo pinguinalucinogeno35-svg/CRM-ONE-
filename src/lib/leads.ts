@@ -35,10 +35,22 @@ export type Lead = {
   temperature: Temperature;
   stage: Stage;
   notes: string;
+  captured_via: CapturedVia;
+  origin_detail: string;
   created_at: string;
 };
 
-export const LEAD_COLUMNS = "id, name, phone, reason, source, temperature, stage, notes, created_at";
+export const CAPTURED_VIA = [
+  { value: "manual", label: "Cadastro manual" },
+  { value: "formulario", label: "Formulário público" },
+  { value: "whatsapp", label: "Mensagem no WhatsApp" },
+  { value: "lead_ads", label: "Formulário de anúncio" },
+] as const;
+
+export type CapturedVia = (typeof CAPTURED_VIA)[number]["value"];
+
+export const LEAD_COLUMNS = 
+  "id, name, phone, reason, source, temperature, stage, notes, captured_via, origin_detail, created_at";
 
 const isOneOf = <T extends string>(list: readonly { value: T }[], v: unknown): v is T =>
   list.some((item) => item.value === v);

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, PageHeader } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { IconChat } from "@/components/icons";
-import { LEAD_COLUMNS, whatsappUrl, type Lead } from "@/lib/leads";
+import { CAPTURED_VIA, LEAD_COLUMNS, labelOf, whatsappUrl, type Lead } from "@/lib/leads";
 import { deleteLead } from "../actions";
 import { LeadForm } from "../lead-form";
 
@@ -25,7 +25,13 @@ export default async function LeadPage({ params, searchParams }: PageProps<"/lea
     <>
       <PageHeader
         title={lead.name}
-        description={`Criado em ${new Date(lead.created_at).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}`}
+        description={[
+          `Criado em ${new Date(lead.created_at).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}`,
+          labelOf(CAPTURED_VIA, lead.captured_via),
+          lead.captured_via === "formulario" ? "" : lead.origin_detail,
+        ]
+          .filter(Boolean)
+          .join(" · ")}
         action={
           <a
             href={whatsappUrl(lead.phone)}
