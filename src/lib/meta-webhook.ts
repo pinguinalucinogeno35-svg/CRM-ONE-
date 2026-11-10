@@ -7,6 +7,8 @@ export type InboundLead = {
   text: string;
   source: "whatsapp" | "anuncio";
   detail: string;
+  /** Título do anúncio que originou a conversa, quando houver. */
+  campaign: string;
 };
 
 /** Confere o cabeçalho X-Hub-Signature-256 ("sha256=<hex>") contra o corpo bruto. */
@@ -58,6 +60,7 @@ export function parseWhatsAppLeads(payload: unknown): InboundLead[] {
           text: str(obj(message.text).body) || str(obj(message.button).text),
           source: fromAd ? "anuncio" : "whatsapp",
           detail: fromAd ? ["Anúncio", headline, url].filter(Boolean).join(" · ") : "",
+          campaign: fromAd ? headline.slice(0, 120) : "",
         });
       }
     }

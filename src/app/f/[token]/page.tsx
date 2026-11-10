@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { createPublicClient } from "@/lib/supabase/public";
-import { isSource } from "@/lib/leads";
+import { CAMPAIGN_PATTERN, isSource } from "@/lib/leads";
 import { PublicForm } from "./public-form";
 
 export const metadata: Metadata = { title: "Fale conosco", robots: { index: false } };
 
 async function FormCard({ params, searchParams }: PageProps<"/f/[token]">) {
   await connection();
-  const [{ token }, { origem }] = await Promise.all([params, searchParams]);
+  const [{ token }, { origem, c }] = await Promise.all([params, searchParams]);
   const valid = /^[a-z0-9_]{8,64}$/i.test(token);
   const { data: name } = valid
     ? await createPublicClient().rpc("get_public_form", { p_token: token })
@@ -28,7 +28,11 @@ async function FormCard({ params, searchParams }: PageProps<"/f/[token]">) {
     <div className="rounded-2xl border border-line bg-surface p-6">
       <h1 className="text-xl font-semibold tracking-tight">{name}</h1>
       <p className="mb-6 mt-1 text-sm text-muted">Deixe seu contato e retornamos para você.</p>
-      <PublicForm token={token} source={typeof origem === "string" && isSource(origem) ? origem : "site"} />
+      <PublicForm
+        token={token}
+        source={typeof origem === "string" && isSource(origem) ? origem : "site"}
+        campaign={typeof c === "string" && CAMPAIGN_PATTERN.test(c) ? c : ""}
+      />
     </div>
   );
 }

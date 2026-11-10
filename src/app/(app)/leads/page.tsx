@@ -57,6 +57,8 @@ export default async function LeadsPage({ searchParams }: PageProps<"/leads">) {
   const filtering = Boolean(q || temperature || stage || source);
 
   const supabase = await createClient();
+  // Leads automáticos esfriam com o tempo: reavalia antes de mostrar.
+  await supabase.rpc("refresh_lead_temperatures");
   let query = supabase.from("leads").select(LEAD_COLUMNS).order("created_at", { ascending: false }).limit(LIMIT);
   if (isTemperature(temperature)) query = query.eq("temperature", temperature);
   if (isStage(stage)) query = query.eq("stage", stage);

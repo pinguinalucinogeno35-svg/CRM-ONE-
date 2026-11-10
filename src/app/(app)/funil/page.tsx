@@ -14,6 +14,8 @@ const LIMIT = 500;
 export default async function FunilPage() {
   await requireOrganization();
   const supabase = await createClient();
+  // Leads automáticos esfriam com o tempo: reavalia antes de mostrar.
+  await supabase.rpc("refresh_lead_temperatures");
   const { data, error } = await supabase
     .from("leads")
     .select(LEAD_COLUMNS)

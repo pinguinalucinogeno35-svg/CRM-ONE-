@@ -165,3 +165,13 @@ export function IconSocial(props: P) {
     </Icon>
   );
 }
+
+/** Resultados: barras crescentes com uma seta de tendência. */
+export function IconResults(props: P) {
+  return (
+    <Icon {...props}>
+      <path d="M4.5 19.5v-5M10 19.5v-8M15.5 19.5v-11" />
+      <path d="m4.5 9 5-4 4 2 6-3.5M16.5 3.5h3v3" />
+    </Icon>
+  );
+}

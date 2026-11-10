@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       p_reason: lead.text,
       p_source: lead.source,
       p_detail: lead.detail,
+      p_campaign: lead.campaign,
     });
     if (error) failed = true;
   }

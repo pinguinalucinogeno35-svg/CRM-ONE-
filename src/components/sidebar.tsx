@@ -1,7 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { signOut } from "@/app/login/actions";
 import { NavLink } from "./nav-link";
-import { IconAccount, IconCapture, IconClients, IconFunnel, IconLeads, IconPanel, IconSignOut, IconSocial, LogoMark } from "./icons";
+import { IconAccount, IconCapture, IconClients, IconFunnel, IconLeads, IconPanel, IconResults, IconSignOut, IconSocial, LogoMark } from "./icons";
 
 export async function Sidebar() {
   const ctx = await requireUser();
@@ -35,6 +35,9 @@ export async function Sidebar() {
             </NavLink>
             <NavLink href="/redes">
               <IconSocial /> Redes
+            </NavLink>
+            <NavLink href="/resultados">
+              <IconResults /> Resultados
             </NavLink>
           </>
         )}

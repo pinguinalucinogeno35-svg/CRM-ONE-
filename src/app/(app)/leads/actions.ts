@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireOrganization } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { isSource, isStage, isTemperature, normalizePhone } from "@/lib/leads";
+import { isSource, isStage, isTemperature, normalizePhone, parseMoney } from "@/lib/leads";
 import type { ActionState } from "@/lib/action-state";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -26,11 +26,28 @@ export async function saveLead(_prev: ActionState, formData: FormData): Promise<
   if (phone.length < 10 || phone.length > 13) return { error: "Informe o telefone com DDD." };
   if (reason.length > 500) return { error: "O motivo do contato pode ter até 500 caracteres." };
   if (notes.length > 2000) return { error: "As observações podem ter até 2000 caracteres." };
-  if (!isSource(source) || !isTemperature(temperature) || !isStage(stage)) {
+  const campaign = String(formData.get("campaign") ?? "").trim();
+  const saleValue = parseMoney(String(formData.get("sale_value") ?? ""));
+  const auto = temperature === "auto";
+  if (!isSource(source) || !(auto || isTemperature(temperature)) || !isStage(stage)) {
     return { error: "Opção inválida. Recarregue a página e tente de novo." };
   }
+  if (campaign.length > 120) return { error: "A campanha pode ter até 120 caracteres." };
+  if (saleValue === "invalid") return { error: "Informe o valor da venda em reais, por exemplo 1.500,00." };
 
-  const values = { name, phone, reason, notes, source, temperature, stage };
+  // No modo automático o banco calcula a temperatura a partir das regras.
+  const values = {
+    name,
+    phone,
+    reason,
+    notes,
+    source,
+    stage,
+    campaign,
+    sale_value: saleValue,
+    temperature_mode: auto ? "auto" : "manual",
+    ...(auto ? {} : { temperature }),
+  };
   const supabase = await createClient();
 
   if (id) {

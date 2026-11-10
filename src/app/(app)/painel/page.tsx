@@ -30,6 +30,8 @@ export default async function PainelPage() {
   }
 
   const supabase = await createClient();
+  // Leads automáticos esfriam com o tempo: reavalia antes de mostrar.
+  await supabase.rpc("refresh_lead_temperatures");
   const count = (column: "stage" | "temperature", value: string, openOnly = false) => {
     let query = supabase.from("leads").select("id", { count: "exact", head: true }).eq(column, value);
     if (openOnly) query = query.not("stage", "in", "(fechado,perdido)");

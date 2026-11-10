@@ -70,8 +70,33 @@ export function LeadForm({ lead, back }: { lead?: Lead; back: "leads" | "funil" 
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Select label="Origem do contato" name="source" defaultValue={lead?.source ?? "instagram"} options={SOURCES} />
-        <Select label="Temperatura" name="temperature" defaultValue={lead?.temperature ?? "medio"} options={TEMPERATURES} />
+        <Select
+          label="Temperatura"
+          name="temperature"
+          defaultValue={!lead || lead.temperature_mode === "auto" ? "auto" : lead.temperature}
+          options={[{ value: "auto", label: "Automática" }, ...TEMPERATURES]}
+        />
         <Select label="Etapa do funil" name="stage" defaultValue={lead?.stage ?? "novo"} options={STAGES} />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          label="Campanha ou anúncio"
+          name="campaign"
+          defaultValue={lead?.campaign}
+          maxLength={120}
+          autoComplete="off"
+          hint="Opcional. Agrupa os resultados por campanha."
+        />
+        <Field
+          label="Valor da venda (R$)"
+          name="sale_value"
+          inputMode="decimal"
+          defaultValue={lead?.sale_value != null ? lead.sale_value.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) : ""}
+          placeholder="0,00"
+          autoComplete="off"
+          hint="Preencha ao fechar a venda."
+        />
       </div>
 
       <label className="block">

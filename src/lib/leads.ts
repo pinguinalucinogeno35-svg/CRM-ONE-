@@ -37,6 +37,10 @@ export type Lead = {
   notes: string;
   captured_via: CapturedVia;
   origin_detail: string;
+  temperature_mode: "auto" | "manual";
+  temperature_reasons: { label: string; points: number }[];
+  campaign: string;
+  sale_value: number | null;
   created_at: string;
 };
 
@@ -50,7 +54,7 @@ export const CAPTURED_VIA = [
 export type CapturedVia = (typeof CAPTURED_VIA)[number]["value"];
 
 export const LEAD_COLUMNS = 
-  "id, name, phone, reason, source, temperature, stage, notes, captured_via, origin_detail, created_at";
+  "id, name, phone, reason, source, temperature, stage, notes, captured_via, origin_detail, temperature_mode, temperature_reasons, campaign, sale_value, created_at";
 
 const isOneOf = <T extends string>(list: readonly { value: T }[], v: unknown): v is T =>
   list.some((item) => item.value === v);
@@ -78,3 +82,19 @@ export function whatsappUrl(digits: string) {
   const full = digits.length <= 11 ? `55${digits}` : digits;
   return `https://wa.me/${full}`;
 }
+
+/** Nome de campanha aceito em links de captura: letras, números, espaço, hífen e sublinhado. */
+export const CAMPAIGN_PATTERN = /^[\p{L}\p{N} _-]{1,60}$/u;
+
+/** Lê "1.234,56", "1234.56" ou "R$ 1.234" como número; null se vazio ou inválido. */
+export function parseMoney(input: string): number | null | "invalid" {
+  const raw = input.replace(/[R$\s]/g, "");
+  if (!raw) return null;
+  const normalized = raw.includes(",") ? raw.replace(/\./g, "").replace(",", ".") : raw;
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return "invalid";
+  const value = Number(normalized);
+  return value <= 9_999_999_999.99 ? value : "invalid";
+}
+
+export const formatMoney = (value: number) =>
+  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { siteUrl } from "@/lib/site-url";
 import { Card, PageHeader } from "@/components/ui";
 import { CopyField } from "@/components/copy-field";
+import { CampaignLink } from "./campaign-link";
 
 export const metadata: Metadata = { title: "Captação" };
 
@@ -31,6 +32,17 @@ export default async function CapturaPage() {
         <CopyField label="Para a bio do Instagram" value={`${link}?origem=instagram`} />
         <CopyField label="Para o Facebook" value={`${link}?origem=facebook`} />
         <CopyField label="Para o site e outros lugares" value={link} />
+      </Card>
+
+      <Card className="mb-4 space-y-4 p-5">
+        <div>
+          <h2 className="font-semibold">Link de campanha</h2>
+          <p className="mt-1 text-sm text-muted">
+            Use um link diferente em cada publicação ou anúncio. Em Resultados você vê quantos leads e vendas cada um
+            trouxe.
+          </p>
+        </div>
+        <CampaignLink baseLink={link} />
       </Card>
 
       <Card className="p-5">

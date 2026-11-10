@@ -6,7 +6,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { useFormAction } from "@/lib/use-form-action";
 import { IconDone } from "@/components/icons";
 
-export function PublicForm({ token, source }: { token: string; source: string }) {
+export function PublicForm({ token, source, campaign }: { token: string; source: string; campaign: string }) {
   const { state, pending, formProps } = useFormAction(submitPublicLead);
 
   if (state?.success) {
@@ -25,6 +25,7 @@ export function PublicForm({ token, source }: { token: string; source: string })
     <form {...formProps} className="space-y-4">
       <input type="hidden" name="token" value={token} />
       <input type="hidden" name="source" value={source} />
+      <input type="hidden" name="campaign" value={campaign} />
       <div className="hidden" aria-hidden="true">
         <label>
           Não preencha este campo
