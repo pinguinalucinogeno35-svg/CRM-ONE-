@@ -13,7 +13,15 @@ Stack: Next.js 16 (App Router) + Supabase (Postgres, Auth, RLS) + Vercel.
   remover usuários, gerar nova senha provisória.
 - Painel do cliente (`/painel`) e página de conta (`/conta`).
 
-Próximas fases: leads e funil, captura automática, métricas sociais.
+## Fase 2 (leads e funil)
+
+- Leads (`/leads`): cadastro com nome, telefone, motivo, origem, temperatura
+  (quente, médio, frio) e etapa; busca por nome ou telefone e filtros.
+- Funil (`/funil`): quadro por etapa (Novo, Em contato, Proposta, Fechado,
+  Perdido); arrastar um cartão muda a etapa.
+- Painel (`/painel`): leads em aberto, por temperatura e por etapa.
+
+Próximas fases: captura automática de leads e métricas sociais.
 
 ## Configuração
 

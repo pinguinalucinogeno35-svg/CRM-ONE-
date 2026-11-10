@@ -114,3 +114,32 @@ export function IconDone(props: P) {
     </Icon>
   );
 }
+
+/** Leads: ficha de contato com linhas de dados. */
+export function IconLeads(props: P) {
+  return (
+    <Icon {...props}>
+      <circle cx="8" cy="9" r="2.5" />
+      <path d="M3.5 18c.7-2.4 2.4-3.5 4.5-3.5s3.8 1.1 4.5 3.5" />
+      <path d="M15 8h5.5M15 12h5.5M16.5 16h4" />
+    </Icon>
+  );
+}
+
+/** Funil: trapézio que afunila até a saída. */
+export function IconFunnel(props: P) {
+  return (
+    <Icon {...props}>
+      <path d="M3.5 5h17l-6.5 7.5V19l-4 1.5v-8L3.5 5Z" />
+    </Icon>
+  );
+}
+
+/** Conversa: balão com cauda, usado no atalho de WhatsApp. */
+export function IconChat(props: P) {
+  return (
+    <Icon {...props}>
+      <path d="M4.5 18.5 5.6 15A7.5 7.5 0 1 1 9 18.4l-4.5.1Z" />
+    </Icon>
+  );
+}

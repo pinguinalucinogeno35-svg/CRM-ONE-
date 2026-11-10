@@ -63,3 +63,11 @@ export async function requireAdmin(): Promise<SessionContext> {
   if (!ctx.isAdmin) redirect("/");
   return ctx;
 }
+
+/** Para telas do cliente: exige um cliente ativo. A equipe ONE volta ao /admin. */
+export async function requireOrganization(): Promise<SessionContext & { organization: Organization }> {
+  const ctx = await requireUser();
+  if (ctx.isAdmin) redirect("/admin");
+  if (!ctx.organization) redirect("/painel");
+  return ctx as SessionContext & { organization: Organization };
+}

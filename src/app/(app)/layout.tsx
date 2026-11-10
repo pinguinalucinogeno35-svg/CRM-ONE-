@@ -9,7 +9,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
         <Sidebar />
       </Suspense>
       <main className="min-w-0 flex-1 px-4 py-6 md:px-10 md:py-10">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
         </div>
       </main>

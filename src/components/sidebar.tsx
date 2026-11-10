@@ -1,7 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { signOut } from "@/app/login/actions";
 import { NavLink } from "./nav-link";
-import { IconAccount, IconClients, IconPanel, IconSignOut, LogoMark } from "./icons";
+import { IconAccount, IconClients, IconFunnel, IconLeads, IconPanel, IconSignOut, LogoMark } from "./icons";
 
 export async function Sidebar() {
   const ctx = await requireUser();
@@ -14,15 +14,23 @@ export async function Sidebar() {
         <span className="font-semibold tracking-tight">CRM ONE</span>
       </div>
 
-      <nav aria-label="Principal" className="flex gap-1 md:flex-col">
+      <nav aria-label="Principal" className="flex gap-1 overflow-x-auto md:flex-col md:overflow-visible">
         {ctx.isAdmin ? (
           <NavLink href="/admin">
             <IconClients /> Clientes
           </NavLink>
         ) : (
-          <NavLink href="/painel">
-            <IconPanel /> Painel
-          </NavLink>
+          <>
+            <NavLink href="/painel">
+              <IconPanel /> Painel
+            </NavLink>
+            <NavLink href="/leads">
+              <IconLeads /> Leads
+            </NavLink>
+            <NavLink href="/funil">
+              <IconFunnel /> Funil
+            </NavLink>
+          </>
         )}
         <NavLink href="/conta">
           <IconAccount /> Conta
