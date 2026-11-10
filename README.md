@@ -1,0 +1,45 @@
+# CRM ONE
+
+CRM da ONE para seus clientes: leads, funil de vendas e métricas de redes sociais.
+
+Stack: Next.js 16 (App Router) + Supabase (Postgres, Auth, RLS) + Vercel.
+
+## Estado atual: Fase 1 (base)
+
+- Login por e-mail e senha (sem cadastro público; os acessos são criados pela ONE).
+- Multi-tenant: cada cliente é uma `organization`; a RLS do banco garante que um
+  usuário só enxerga dados do próprio cliente, e apenas enquanto ele estiver ativo.
+- Painel da equipe ONE (`/admin`): criar clientes, suspender/reativar, criar e
+  remover usuários, gerar nova senha provisória.
+- Painel do cliente (`/painel`) e página de conta (`/conta`).
+
+Próximas fases: leads e funil, captura automática, métricas sociais.
+
+## Configuração
+
+1. Crie um projeto no Supabase e aplique `supabase/migrations/` (SQL Editor ou CLI).
+2. Copie `.env.example` para `.env.local` e preencha as três variáveis.
+3. Crie o primeiro usuário da equipe ONE em Authentication > Users > Add user e
+   promova-o no SQL Editor:
+
+   ```sql
+   insert into public.platform_admins (user_id)
+   select id from auth.users where email = 'seu-email@exemplo.com';
+   ```
+
+4. Rode o projeto:
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+## Estrutura
+
+- `supabase/migrations/` — schema, funções e políticas de RLS.
+- `src/proxy.ts` — renova a sessão e redireciona quem não está logado.
+- `src/lib/auth.ts` — leitura da sessão e checagem de papel (equipe ONE ou cliente).
+- `src/lib/supabase/admin.ts` — cliente com chave secreta, usado só nas ações do `/admin`.
+- `src/app/(app)/` — telas autenticadas.
+
+Os ícones são próprios (`src/components/icons.tsx`); não usar emoji como ícone.
