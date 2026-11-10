@@ -116,8 +116,9 @@ create trigger leads_apply_scoring
   for each row execute function private.apply_lead_scoring();
 
 -- "updated_at" passa a registrar só mudanças feitas por pessoas; o
--- esfriamento automático não deve reordenar o funil.
-create or replace function private.set_updated_at()
+-- esfriamento automático não deve reordenar o funil. O gatilho antigo fica
+-- desativado (a remoção dele e das funções antigas está em migração própria).
+create function private.set_lead_updated_at()
 returns trigger
 language plpgsql
 set search_path = ''
@@ -132,6 +133,15 @@ begin
   return new;
 end;
 $$;
+
+revoke all on function private.set_lead_updated_at() from public, anon;
+
+alter trigger leads_set_updated_at on public.leads rename to leads_set_updated_at_legacy;
+alter table public.leads disable trigger leads_set_updated_at_legacy;
+
+create trigger leads_set_updated_at
+  before update on public.leads
+  for each row execute function private.set_lead_updated_at();
 
 -- Reavalia os leads automáticos em aberto do cliente de quem chama (a RLS
 -- limita as linhas). Só toca nos que mudariam de temperatura.
@@ -186,12 +196,11 @@ revoke all on function public.lead_report(timestamptz) from public, anon;
 grant execute on function public.lead_report(timestamptz) to authenticated;
 
 -- ---------------------------------------------------------------------------
--- Captura: passa a registrar a campanha
+-- Captura: versões que também registram a campanha
 -- ---------------------------------------------------------------------------
 
-drop function public.submit_public_lead(text, text, text, text, text);
-drop function public.ingest_channel_lead(text, text, text, text, text, text, text);
-drop function private.capture_lead(uuid, text, text, text, text, text, text);
+-- As versões novas convivem com as antigas (mesmo nome, um parâmetro a mais),
+-- para o site publicado não parar durante a troca.
 
 create function private.capture_lead(
   p_org uuid,

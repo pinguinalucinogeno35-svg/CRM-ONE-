@@ -57,6 +57,21 @@ documentação; ainda não testado contra a Meta real.
 Ainda não feito: Lead Ads (formulários de anúncio da Meta) e publicações do
 Facebook.
 
+## Fase 6 (temperatura automática e resultados)
+
+- A temperatura do lead é calculada no banco por pontos (etapa, intenção no
+  motivo, origem e tempo parado); as regras estão em `private.score_lead`, na
+  migração `20261110060000`. O lead mostra os motivos, e dá para definir
+  manualmente.
+- Cada lead tem campanha e valor da venda. Em `/captura` há um gerador de link
+  de campanha (`/f/<token>?origem=...&c=<campanha>`).
+- `/resultados`: leads, vendas, conversão e valor vendido por origem e por
+  campanha, e o caminho do alcance até a venda para as redes conectadas.
+
+Pendência de limpeza no banco: as versões antigas de `submit_public_lead`,
+`ingest_channel_lead`, `private.capture_lead` e o gatilho desativado
+`leads_set_updated_at_legacy` ainda existem e podem ser removidos.
+
 ## Configuração
 
 1. Crie um projeto no Supabase e aplique `supabase/migrations/` (SQL Editor ou CLI).
