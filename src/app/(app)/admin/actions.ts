@@ -11,6 +11,8 @@ import type { ActionState } from "@/lib/action-state";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const MISSING_KEY = "Chave secreta do Supabase não configurada no servidor (SUPABASE_SECRET_KEY).";
+
 function temporaryPassword() {
   return randomBytes(9).toString("base64url");
 }
@@ -72,6 +74,7 @@ export async function createClientUser(_prev: ActionState, formData: FormData): 
   if (!org) return { error: "Cliente não encontrado." };
 
   const admin = createAdminClient();
+  if (!admin) return { error: MISSING_KEY };
   const password = temporaryPassword();
   const { data: created, error: createError } = await admin.auth.admin.createUser({
     email,
@@ -108,8 +111,10 @@ export async function resetUserPassword(_prev: ActionState, formData: FormData):
   if (!UUID.test(organizationId) || !UUID.test(userId)) return { error: "Usuário inválido." };
   if (!(await isMemberOfOrganization(organizationId, userId))) return { error: "Usuário não pertence a este cliente." };
 
+  const admin = createAdminClient();
+  if (!admin) return { error: MISSING_KEY };
   const password = temporaryPassword();
-  const { error } = await createAdminClient().auth.admin.updateUserById(userId, { password });
+  const { error } = await admin.auth.admin.updateUserById(userId, { password });
   if (error) return { error: "Não foi possível gerar a nova senha." };
 
   return { success: "Nova senha gerada.", credentials: { email, password } };
@@ -136,7 +141,7 @@ export async function removeClientUser(formData: FormData) {
     supabase.from("platform_admins").select("user_id").eq("user_id", userId).maybeSingle(),
   ]);
   if (count === 0 && !isStaff) {
-    await createAdminClient().auth.admin.deleteUser(userId);
+    await createAdminClient()?.auth.admin.deleteUser(userId);
   }
   refresh();
 }

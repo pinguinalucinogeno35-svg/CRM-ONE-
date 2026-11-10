@@ -1,8 +1,11 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
 export async function createClient() {
+  // A sessão depende do horário atual (expiração do token): sempre em tempo de requisição.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient(
