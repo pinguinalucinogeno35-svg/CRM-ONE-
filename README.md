@@ -46,8 +46,9 @@ Para o webhook funcionar, configure `SUPABASE_SECRET_KEY`, `META_APP_SECRET` e
   "Atualizar agora", e diária pelo Cron da Vercel (`/api/cron/sync-social`, que
   exige `CRON_SECRET` e `SUPABASE_SECRET_KEY`).
 
-Configuração na Meta: em Facebook Login, cadastre o redirect
-`https://<site>/api/meta/callback`. As permissões usadas estão em
+Configuração na Meta: em Facebook Login for Business, cadastre o redirect
+`https://<site>/api/meta/callback` e crie uma configuração do tipo "token de
+acesso do usuário"; o ID dela vai em `META_LOGIN_CONFIG_ID`. As permissões usadas estão em
 `src/lib/meta/config.ts`; contas que não são administradoras ou testadoras do
 app só conseguem conectar depois do App Review.
 

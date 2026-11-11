@@ -26,6 +26,9 @@ export async function GET() {
   url.searchParams.set("redirect_uri", `${base}/api/meta/callback`);
   url.searchParams.set("state", state);
   url.searchParams.set("response_type", "code");
-  url.searchParams.set("scope", META_SCOPES.join(","));
+  // Apps criados com casos de uso de empresa usam o Facebook Login for Business,
+  // em que as permissões vêm de uma configuração salva no painel da Meta.
+  if (cfg.loginConfigId) url.searchParams.set("config_id", cfg.loginConfigId);
+  else url.searchParams.set("scope", META_SCOPES.join(","));
   redirect(url.toString());
 }

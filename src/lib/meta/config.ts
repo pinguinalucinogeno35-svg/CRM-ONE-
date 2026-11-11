@@ -16,7 +16,14 @@ export const META_SCOPES = [
   "business_management",
 ];
 
-export type MetaConfig = { appId: string; appSecret: string; graphUrl: string; dialogUrl: string };
+export type MetaConfig = {
+  appId: string;
+  appSecret: string;
+  /** ID da configuração do Facebook Login for Business; quando existe, substitui a lista de permissões. */
+  loginConfigId: string | null;
+  graphUrl: string;
+  dialogUrl: string;
+};
 
 export function metaConfig(): MetaConfig | null {
   const appId = process.env.META_APP_ID;
@@ -25,6 +32,7 @@ export function metaConfig(): MetaConfig | null {
   return {
     appId,
     appSecret,
+    loginConfigId: /^[0-9]{5,30}$/.test(process.env.META_LOGIN_CONFIG_ID ?? "") ? process.env.META_LOGIN_CONFIG_ID! : null,
     // Sobrescritos apenas em testes locais, com um simulador da API.
     graphUrl: (process.env.META_GRAPH_URL ?? "https://graph.facebook.com").replace(/\/$/, ""),
     dialogUrl: (process.env.META_DIALOG_URL ?? "https://www.facebook.com").replace(/\/$/, ""),
